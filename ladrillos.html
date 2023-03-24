@@ -48,18 +48,18 @@
     var teclaDerechaPulsada = false;
     var teclaIzquierdaPulsada = false;
 
-    for(c=0; c<ladrillosPorColumna; c++) {
+    for(c=0; c<ladrillosPorColumna; c++) { //Creamos el array de los ladrillos
         ladrillos[c] = [];
         for(r=0; r<ladrillosPorFila; r++) {
-            ladrillos[c][r] = { x: 0, y: 0, status: 1};
+            ladrillos[c][r] = { x: 0, y: 0, status: 1}; //estatus será para ver si ha sido golpeado o no
         }
     }
 
-    document.addEventListener("keydown", keyDownHandler, false);
-    document.addEventListener("keyup", keyUpHandler, false);
-    setInterval(draw, 12);
+    document.addEventListener("keydown", keyDownHandler, false); //evento para manejar teclas flecha
+    document.addEventListener("keyup", manejoDeTecla, false);
+    setInterval(dibujar, 12);
 
-    function keyDownHandler(e) {
+    function keyDownHandler(e) { 
         if(e.keyCode == 39) {
             teclaDerechaPulsada = true;
         }
@@ -68,10 +68,10 @@
         }
     }
 
-    function drawBricks() {
+    function pintarLadrillos() { // Función para pintar los ladrillos en pantalla
         for(c=0; c<ladrillosPorColumna; c++) {
             for(r=0; r<ladrillosPorFila; r++) {
-                if(ladrillos[c][r].status == 1) {
+                if(ladrillos[c][r].status == 1) { //sólo pintamos ladrino que no se han golpeado
                     var brickX = (c*(anchoLadrillo+margenLadrillo))+offsetIzquierda;
                     var brickY = (r*(altoLadrillo+margenLadrillo))+offsetAlto;
                     ladrillos[c][r].x = brickX;
@@ -87,7 +87,7 @@
     }
     
 
-    function collisionDetection() {
+    function detectarColision() {
         for(c=0; c<ladrillosPorColumna; c++) {
             for(r=0; r<ladrillosPorFila; r++) {
                 var b = ladrillos[c][r];
@@ -104,7 +104,7 @@
     }
 
 
-    function drawPuntuacion(){
+    function pintarPuntuacion(){
         tablero.font = "16px Arial";
         tablero.fillStyle = "#0095DD";
         tablero.fillText("Score: "+puntuacion, 8, 20);
@@ -116,7 +116,7 @@
         }
     }
 
-    function keyUpHandler(e) {
+    function manejoDeTecla(e) {
         if(e.keyCode == 39) {
             teclaDerechaPulsada = false;
         }
@@ -125,7 +125,7 @@
         }
     }
 
-    function drawPaddle() {
+    function pintarBarra() {
         tablero.beginPath();
         tablero.rect(barraX, canvas.height-alturaBarra, anchuraBarra, alturaBarra);
         tablero.fillStyle = "#0095DD";
@@ -133,7 +133,7 @@
         tablero.closePath();
     }
 
-    function drawBall() {
+    function pintarBola() {
         tablero.beginPath();
         tablero.arc(x, y, 10, 0, Math.PI*2);
         tablero.fillStyle = "#0095DD";
@@ -141,7 +141,7 @@
         tablero.closePath();
     }
 
-    function drawPaddle() {
+    function pintarBarra() {
         tablero.beginPath();
         tablero.rect(barraX, canvas.height-alturaBarra, anchuraBarra, alturaBarra);
         tablero.fillStyle = "#0099DD";
@@ -149,13 +149,13 @@
         tablero.closePath();
     }
 
-    function draw() {
+    function dibujar() {
         tablero.clearRect(0, 0, canvas.width, canvas.height);
-        drawBall();
-        drawPaddle();
-        collisionDetection();
-        drawBricks();
-        drawPuntuacion();
+        pintarBola();
+        pintarBarra();
+        detectarColision();
+        pintarLadrillos();
+        pintarPuntuacion();
         
         if(x + dx > canvas.width-radioPelota || x + dx < radioPelota) {
             dx = -dx;
@@ -168,7 +168,7 @@
             dy=-dy;
            }
            else{
-                alert("GAME OVER");
+                alert("Fin de partida.");
                 y=radioPelota;
                 document.location.reload();
            }
