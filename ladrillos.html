@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Juego Ladrillos</title>
+    <style>
+      * { padding: 10; margin: 10; }
+      canvas { background: rgb(253,253,252); display: block; margin: 0 auto; }
+    </style>
+</head>
+
+<body>
+<header style="padding: 5pxpx;">
+    <h1>Por FRANCISCO G. VELASCO</h1>
+    <BR>
+    <p>Simple juego creado para prácticas con JavaScript obviando la estetica.</p>    
+</header>
+
+ 
+ <canvas id="miTablero" width="480" height="320" style="border:1px solid #000000;">
+ </canvas>
+
+<script>
+    var canvas = document.getElementById("miTablero");
+    var tablero = canvas.getContext("2d");
+
+    var x = canvas.width/2;
+    var y = canvas.height-30;
+    var dx = 2;
+    var dy = -2;
+    var radioPelota=10;
+ 
+    var alturaBarra = 10;
+    var anchuraBarra = 70;
+    var barraX = (canvas.width-anchuraBarra)/2;
+
+    var ladrillosPorFila = 4;
+    var ladrillosPorColumna = 8;
+    var anchoLadrillo = 45;
+    var altoLadrillo = 20;
+    var margenLadrillo = 10;
+    var offsetAlto = 30;
+    var offsetIzquierda = 30;
+    var ladrillos = [];
+
+    var puntuacion = 0;
+
+    var teclaDerechaPulsada = false;
+    var teclaIzquierdaPulsada = false;
+
+    for(c=0; c<ladrillosPorColumna; c++) {
+        ladrillos[c] = [];
+        for(r=0; r<ladrillosPorFila; r++) {
+            ladrillos[c][r] = { x: 0, y: 0, status: 1};
+        }
+    }
+
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+    setInterval(draw, 12);
+
+    function keyDownHandler(e) {
+        if(e.keyCode == 39) {
+            teclaDerechaPulsada = true;
+        }
+        else if(e.keyCode == 37) {
+            teclaIzquierdaPulsada = true;
+        }
+    }
+
+    function drawBricks() {
+        for(c=0; c<ladrillosPorColumna; c++) {
+            for(r=0; r<ladrillosPorFila; r++) {
+                if(ladrillos[c][r].status == 1) {
+                    var brickX = (c*(anchoLadrillo+margenLadrillo))+offsetIzquierda;
+                    var brickY = (r*(altoLadrillo+margenLadrillo))+offsetAlto;
+                    ladrillos[c][r].x = brickX;
+                    ladrillos[c][r].y = brickY;
+                    tablero.beginPath();
+                    tablero.rect(brickX, brickY, anchoLadrillo, altoLadrillo);
+                    tablero.fillStyle = "#991111";
+                    tablero.fill();
+                    tablero.closePath();
+                }
+            }
+        }
+    }
+    
+
+    function collisionDetection() {
+        for(c=0; c<ladrillosPorColumna; c++) {
+            for(r=0; r<ladrillosPorFila; r++) {
+                var b = ladrillos[c][r];
+                if(b.status==1){    
+                    if(x > b.x && x < b.x+anchoLadrillo && y > b.y && y < b.y+altoLadrillo) {
+                        dy = -dy;
+                        b.status=0;
+                        puntuacion+=1000;
+                       
+                    }
+                }
+            }
+        }
+    }
+
+
+    function drawPuntuacion(){
+        tablero.font = "16px Arial";
+        tablero.fillStyle = "#0095DD";
+        tablero.fillText("Score: "+puntuacion, 8, 20);
+         if (puntuacion==(ladrillosPorColumna*ladrillosPorFila)){
+            alert("Has Ganado el juego!!");
+            puntuacion=0;
+            document.location.reload();
+
+        }
+    }
+
+    function keyUpHandler(e) {
+        if(e.keyCode == 39) {
+            teclaDerechaPulsada = false;
+        }
+        else if(e.keyCode == 37) {
+            teclaIzquierdaPulsada = false;
+        }
+    }
+
+    function drawPaddle() {
+        tablero.beginPath();
+        tablero.rect(barraX, canvas.height-alturaBarra, anchuraBarra, alturaBarra);
+        tablero.fillStyle = "#0095DD";
+        tablero.fill();
+        tablero.closePath();
+    }
+
+    function drawBall() {
+        tablero.beginPath();
+        tablero.arc(x, y, 10, 0, Math.PI*2);
+        tablero.fillStyle = "#0095DD";
+        tablero.fill();
+        tablero.closePath();
+    }
+
+    function drawPaddle() {
+        tablero.beginPath();
+        tablero.rect(barraX, canvas.height-alturaBarra, anchuraBarra, alturaBarra);
+        tablero.fillStyle = "#0099DD";
+        tablero.fill();
+        tablero.closePath();
+    }
+
+    function draw() {
+        tablero.clearRect(0, 0, canvas.width, canvas.height);
+        drawBall();
+        drawPaddle();
+        collisionDetection();
+        drawBricks();
+        drawPuntuacion();
+        
+        if(x + dx > canvas.width-radioPelota || x + dx < radioPelota) {
+            dx = -dx;
+        }
+
+        if(y + dy < radioPelota) {
+            dy = -dy;
+        } else if(y + dy > canvas.height-radioPelota) {
+           if(x > barraX && x < barraX+anchuraBarra){
+            dy=-dy;
+           }
+           else{
+                alert("GAME OVER");
+                y=radioPelota;
+                document.location.reload();
+           }
+        }
+
+        if(teclaDerechaPulsada && barraX < canvas.width-anchuraBarra) {
+        barraX += 7;
+        }
+        else if(teclaIzquierdaPulsada && barraX > 0) {
+            barraX -= 7;
+        }
+        
+        x += dx;
+        y += dy;
+    }
+
+
+
+
+</script>
+
+</body>
+</html>
