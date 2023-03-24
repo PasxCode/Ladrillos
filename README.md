@@ -1,0 +1,3 @@
+Ladrillos.html es mi primera páctica de Java Script. He decidido usar este archivo para prácticar con GIT y GITHUB por ser el primero una de las primeras cosas que hice con JS después de muchos años sin programar y tenerle cierto cariño. Sé que es muy simple pero....
+
+
